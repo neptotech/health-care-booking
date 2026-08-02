@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Center Reservation System</title>
+    <!-- Google Fonts for a modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --bg-color: #f8f9fa;
+            --text-main: #1a1a1a;
+            --text-muted: #555555;
+            --border-color: #e0e0e0;
+            --primary-blue: #325a8b;
+            --primary-blue-hover: #26456b;
+            --success-green: #2e7d32;
+            --font-family: 'Inter', sans-serif;
+        }
+
+        /* Basic Resets */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: #ffffff;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-placeholder {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 1px solid var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--primary-blue);
+            background: #f4f7fb;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #d1d5db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+        }
+
+        .user-avatar svg {
+            width: 24px;
+            height: 24px;
+            fill: #9ca3af;
+        }
+
+        /* Hero Image Section */
+        .hero {
+            width: 100%;
+            height: 250px;
+            /* Placeholder gradient for the building image */
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000') center/cover no-repeat;
+            background-color: #a0aab5;
+        }
+
+        /* Main Content Container */
+        main {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Announcements Button */
+        .announcements-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .btn-announcement {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #e9eff5;
+            border: 1px solid #d1d9e6;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+
+        .btn-announcement:hover {
+            background-color: #dfe7f0;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2.5rem;
+        }
+
+        /* Left Panel */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+
+        .date-select {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: var(--font-family);
+            color: var(--text-muted);
+            outline: none;
+            cursor: pointer;
+            background-color: #ffffff;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem top 50%;
+            background-size: 0.65rem auto;
+        }
+
+        .btn-sso {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-sso:hover {
+            background-color: var(--primary-blue-hover);
+        }
+
+        /* Right Panel - Doctor Cards */
+        .doctor-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .card.active {
+            border-color: var(--success-green);
+            box-shadow: 0 0 0 1px var(--success-green);
+        }
+
+        .card-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            background-color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-img svg {
+            width: 40px;
+            height: 40px;
+            fill: #9ca3af;
+        }
+
+        .card-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .card-role {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .card-timing {
+            font-size: 0.8rem;
+            color: var(--text-main);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #e9ecef;
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            header {
+                padding: 1rem;
+            }
+            .hero {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-section">
+            <div class="logo-placeholder">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>
+            </div>
+            <h1>Health Center Reservation System</h1>
+        </div>
+        <div class="user-avatar">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+    </header>
+
+    <!-- Hero Banner (Inspired by the medical center building in dee08b7e-35ba-47f3-8401-c44da0a8ee14.jpg) -->
+    <div class="hero"></div>
+
+    <!-- Main Content -->
+    <main>
+        <div class="announcements-wrapper">
+            <button class="btn-announcement">
+                Announcements 
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20a1 1 0 0 0 2 0v-2h-2v2Z"/><path d="M4 11V9a8 8 0 0 1 16 0v2l2 4H2l2-4Z"/></svg>
+            </button>
+        </div>
+
+        <div class="content-grid">
+            
+            <!-- Left Side: Booking Action -->
+            <div class="left-panel">
+                <div class="input-group">
+                    <label>Choose a date</label>
+                    <select class="date-select">
+                        <option value="">Select Date</option>
+                        <option value="today">Today</option>
+                        <option value="tomorrow">Tomorrow</option>
+                    </select>
+                </div>
+
+                <div class="input-group" style="margin-top: 1rem;">
+                    <label>Book your slot here</label>
+                    <button class="btn-sso" onclick="alert('Redirecting to IITGN SSO...')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        Continue with IITGN SSO
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Side: Doctor Selection -->
+            <div class="doctor-cards">
+                
+                <!-- Doctor 1 (Active by default) -->
+                <div class="card active" onclick="selectCard(this)">
+                    <!-- Using placeholder images that mimic the real photos -->
+                    <img src="https://i.pravatar.cc/150?img=47" alt="Dr. Vinita Shetty" class="card-img">
+                    <div class="card-name">Dr. Vinita Shetty</div>
+                    <div class="card-role">(Physician)</div>
+                    <div class="card-timing">09:00-13:00 & 13:30-17:30</div>
+                </div>
+
+                <!-- Doctor 2 -->
+                <div class="card" onclick="selectCard(this)">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Dr. Bhavesh Panchal" class="card-img">
+                    <div class="card-name">Dr. Bhavesh Panchal</div>
+                    <div class="card-role">(Physician)</div>
+                    <div class="card-timing">Timing: 16:30 to 18:30</div>
+                </div>
+
+                <!-- Other Staff -->
+                <div class="card" onclick="selectCard(this)">
+                    <div class="card-img">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="card-name" style="margin-top: 1.5rem;">Other staff</div>
+                    <div class="card-timing" style="margin-top: 1rem;">Timing: 16:30 to 18:30</div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        Copyright © 2012 ITBNF, IIT Bombay. All Rights Reserved. Released on August 29, 2024. Version 2024.29.08.
+    </footer>
+
+    <!-- JavaScript for interactivity -->
+    <script>
+        function selectCard(selectedElement) {
+            // Remove 'active' class from all cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => card.classList.remove('active'));
+
+            // Add 'active' class to the clicked card
+            selectedElement.classList.add('active');
+        }
+    </script>
+</body>
+</html>
