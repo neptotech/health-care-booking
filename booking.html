@@ -1340,7 +1340,7 @@
             <div class="sub" id="todayTime">14:20:30</div>
           </div>
         </div>
-        <button class="logout-btn">
+        <button class="logout-btn" id="logoutBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
             <path d="M16 17l5-5-5-5M21 12H9" />
@@ -1558,6 +1558,12 @@
   </div>
 
   <script>
+    /* ---------- Auth Guard ---------- */
+    const SESSION_KEY = 'hcrs_session';
+    if (sessionStorage.getItem(SESSION_KEY) !== 'authenticated') {
+      window.location.replace('login.html');
+    }
+
     /* ---------- Config ---------- */
     const MOCK_TODAY = new Date('2026-08-08T16:11:36');
     const DAY_DOWS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -2502,6 +2508,12 @@
 
     handleDoctorChange();
     attachCellEvents();
+
+    /* ---------- Logout ---------- */
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.replace('login.html');
+    });
   </script>
 </body>
 
