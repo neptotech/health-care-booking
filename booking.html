@@ -1,815 +1,1261 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IIT Gandhinagar Health Centre — Bookings</title>
-<style>
-  :root{
-    --navy:#0d1b3e;
-    --navy-dark:#0a1530;
-    --blue:#1f4fd8;
-    --blue-light:#eaf0ff;
-    --past:#0d2158;
-    --unavail:#c9cdd6;
-    --mine:#f5c344;
-    --reserved:#1c7a3d;
-    --available-border:#d7dbe4;
-    --text-dark:#1b2233;
-    --text-muted:#6b7280;
-    --sun-sat:#c0392b;
-    --weekday:#1f4fd8;
-    --green:#1c7a3d;
-    --border:#e4e7ee;
-    --bg:#f3f4f7;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:'Segoe UI', Arial, Helvetica, sans-serif;
-    background:var(--bg);
-    color:var(--text-dark);
-  }
-  .app{
-    display:flex;
-    min-height:100vh;
-  }
-
-  /* SIDEBAR */
-  .sidebar{
-    width:260px;
-    background:linear-gradient(180deg,var(--navy) 0%, var(--navy-dark) 100%);
-    color:#fff;
-    display:flex;
-    flex-direction:column;
-    padding:22px 18px;
-    flex-shrink:0;
-    position:sticky;
-    top:0;
-    height:100vh;
-    overflow-y:auto;
-    overflow-x:hidden;
-    transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .sidebar::-webkit-scrollbar{
-    width:6px;
-  }
-  .sidebar::-webkit-scrollbar-track{
-    background:transparent;
-  }
-  .sidebar::-webkit-scrollbar-thumb{
-    background:rgba(255,255,255,0.12);
-    border-radius:3px;
-  }
-  .sidebar::-webkit-scrollbar-thumb:hover{
-    background:rgba(255,255,255,0.24);
-  }
-
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:6px 4px 26px 4px;
-    border-bottom:1px solid rgba(255,255,255,0.08);
-    margin-bottom:18px;
-    transition:gap 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), justify-content 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .brand-logo{
-    width:46px;height:46px;border-radius:50%;
-    background:#fff;
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-    box-shadow:0 0 0 2px rgba(255,255,255,0.15);
-  }
-  .brand-logo svg{width:30px;height:30px;}
-  .brand-logo img{width:30px;height:30px;object-fit:contain;}
-  .brand-text{
-    font-size:15px;
-    font-weight:700;
-    line-height:1.25;
-    transition:opacity 0.2s ease, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    max-width:180px;
-    overflow:hidden;
-  }
-
-  .nav{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
-  .nav-item{
-    display:flex;align-items:center;gap:12px;
-    padding:12px 14px;border-radius:10px;
-    font-size:14.5px;font-weight:600;
-    cursor:pointer;
-    color:#dbe1f5;
-    background:transparent;
-    border:none;
-    transition:background .15s ease, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), gap 0.3s cubic-bezier(0.4, 0, 0.2, 1), justify-content 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .nav-item svg{width:19px;height:19px;flex-shrink:0;}
-  .nav-item.active{
-    background:var(--blue);
-    color:#fff;
-  }
-  .nav-item:not(.active):hover{
-    background:rgba(255,255,255,0.06);
-  }
-  .nav-text{
-    transition:opacity 0.2s ease, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    max-width:150px;
-    overflow:hidden;
-    white-space:nowrap;
-    display:inline-block;
-  }
-
-  .sidebar-footer{
-    margin-top:auto;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.08);
-    border-radius:14px;
-    padding:18px 16px;
-    position:relative;
-    overflow:hidden;
-    transition:opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    max-height:250px;
-  }
-  .sidebar-footer .foot-icon{
-    width:40px;height:40px;border-radius:9px;
-    background:var(--blue);
-    display:flex;align-items:center;justify-content:center;
-    margin-bottom:12px;
-  }
-  .sidebar-footer .foot-icon svg{width:22px;height:22px;stroke:#fff;}
-  .sidebar-footer h4{margin:0 0 8px 0;font-size:14.5px;font-weight:700;}
-  .sidebar-footer p{margin:0;font-size:12.5px;color:#b9c1da;line-height:1.5;}
-  .foot-illustration{
-    margin-top:16px;opacity:.5;
-  }
-
-  /* TOGGLE SIDEBAR BUTTON */
-  .toggle-btn{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px 14px;
-    border-radius:10px;
-    font-size:14.5px;
-    font-weight:600;
-    cursor:pointer;
-    color:#dbe1f5;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.08);
-    margin-top:16px;
-    transition:background .15s ease, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), gap 0.3s cubic-bezier(0.4, 0, 0.2, 1), justify-content 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    outline:none;
-    text-align:left;
-    width:100%;
-  }
-  .toggle-btn:hover{
-    background:rgba(255,255,255,0.1);
-    color:#fff;
-  }
-  .toggle-arrow{
-    width:19px;height:19px;
-    flex-shrink:0;
-    stroke:currentColor;
-    transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .toggle-text{
-    transition:opacity 0.2s ease, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    max-width:150px;
-    overflow:hidden;
-    white-space:nowrap;
-    opacity:1;
-  }
-
-  /* COLLAPSED STATES */
-  .sidebar.collapsed{
-    width:78px;
-    padding:22px 12px;
-  }
-  .sidebar.collapsed .brand{
-    gap:0;
-    justify-content:center;
-    padding:6px 0 26px 0;
-  }
-  .sidebar.collapsed .brand-text{
-    opacity:0;
-    max-width:0;
-    pointer-events:none;
-    margin:0;
-  }
-  .sidebar.collapsed .nav-text{
-    opacity:0;
-    max-width:0;
-    pointer-events:none;
-  }
-  .sidebar.collapsed .nav-item{
-    justify-content:center;
-    padding:12px 0;
-    gap:0;
-  }
-  .sidebar.collapsed .sidebar-footer{
-    opacity:0;
-    max-height:0;
-    padding:0;
-    margin:0;
-    border-color:transparent;
-    pointer-events:none;
-  }
-  .sidebar.collapsed .toggle-btn{
-    margin-top:auto;
-    justify-content:center;
-    padding:12px 0;
-    gap:0;
-  }
-  .sidebar.collapsed .toggle-text{
-    opacity:0;
-    max-width:0;
-    pointer-events:none;
-  }
-  .sidebar.collapsed .toggle-arrow{
-    transform:rotate(180deg);
-  }
-
-  /* MAIN */
-  .main{
-    flex:1;
-    padding:22px 30px 40px 30px;
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-  }
-
-  .main-footer{
-    margin-top:auto;
-    padding-top:24px;
-    margin-top:40px;
-    border-top:1px solid var(--border);
-    font-size:13.5px;
-    color:var(--text-muted);
-    text-align:center;
-    font-weight:600;
-  }
-
-  .topbar{
-    display:flex;align-items:center;justify-content:flex-end;
-    gap:34px;
-    background:#fff;
-    border-radius:14px;
-    padding:14px 24px;
-    margin-bottom:20px;
-    box-shadow:0 1px 3px rgba(20,30,60,0.06);
-  }
-  .top-item{display:flex;align-items:center;gap:10px;}
-  .top-item .ic{
-    width:38px;height:38px;border-radius:50%;
-    background:var(--blue-light);
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-  }
-  .top-item .ic svg{width:19px;height:19px;stroke:var(--blue);}
-  .top-item .label{font-size:14px;font-weight:700;color:var(--text-dark);line-height:1.3;}
-  .top-item .sub{font-size:11.5px;color:var(--text-muted);}
-  .divider{width:1px;height:34px;background:var(--border);}
-  .logout-btn{
-    display:flex;align-items:center;gap:8px;
-    border:1px solid #cfd6e6;
-    background:#fff;
-    color:var(--blue);
-    font-weight:700;font-size:13.5px;
-    padding:9px 16px;border-radius:9px;
-    cursor:pointer;
-  }
-  .logout-btn svg{width:16px;height:16px;}
-  .logout-btn:hover{background:var(--blue-light);}
-
-  /* control bar */
-  .controlbar{
-    display:flex;align-items:center;gap:18px;
-    background:#fff;
-    border-radius:14px;
-    padding:16px 22px;
-    margin-bottom:14px;
-    box-shadow:0 1px 3px rgba(20,30,60,0.06);
-    flex-wrap:wrap;
-  }
-  .field-label{font-size:13.5px;color:var(--text-muted);font-weight:600;white-space:nowrap;}
-  .doctor-select{
-    flex:1 1 340px;
-    min-width:260px;
-    padding:10px 14px;
-    border-radius:9px;
-    border:1px solid #d7dbe4;
-    font-size:14px;
-    font-weight:600;
-    color:var(--text-dark);
-    background:#fff;
-    cursor:pointer;
-  }
-  .week-nav{display:flex;align-items:center;gap:14px;}
-  .nav-arrow{
-    width:34px;height:34px;border-radius:8px;
-    border:1px solid #d7dbe4;background:#fff;
-    display:flex;align-items:center;justify-content:center;
-    cursor:pointer;
-    color:var(--text-dark);
-    flex-shrink:0;
-  }
-  .nav-arrow:hover{background:var(--blue-light);}
-  .nav-arrow svg{width:16px;height:16px;}
-  .week-range{text-align:center;white-space:nowrap;}
-  .week-range .dates{font-weight:700;font-size:15px;color:var(--text-dark);}
-  .week-range .tag{font-size:11.5px;color:var(--text-muted);}
-  .jump-wrap{display:flex;align-items:center;gap:10px;margin-left:auto;}
-  .jump-input{
-    position:relative;
-    display:flex;align-items:center;
-  }
-  .jump-input input{
-    padding:9px 34px 9px 12px;
-    border-radius:9px;border:1px solid #d7dbe4;
-    font-size:13.5px;width:130px;
-  }
-  .jump-input svg{
-    position:absolute;right:10px;width:15px;height:15px;color:var(--text-muted);pointer-events:none;
-  }
-
-  /* legend */
-  .legend{
-    display:flex;align-items:center;gap:28px;
-    background:#fff;
-    border-radius:14px;
-    padding:14px 22px;
-    margin-bottom:14px;
-    box-shadow:0 1px 3px rgba(20,30,60,0.06);
-    flex-wrap:wrap;
-  }
-  .legend-item{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;color:var(--text-dark);}
-  .swatch{width:17px;height:17px;border-radius:3px;flex-shrink:0;}
-  .swatch.past{background:var(--past);}
-  .swatch.unavail{background:#c9cdd6;}
-  .swatch.mine{background:var(--mine);}
-  .swatch.reserved{background:var(--reserved);}
-  .swatch.free{background:#fff;border:1px solid #b9c0d1;}
-
-  /* doctor card */
-  .doctor-card{
-    display:flex;align-items:center;
-    background:#fff;
-    border-radius:14px;
-    padding:18px 24px;
-    margin-bottom:14px;
-    box-shadow:0 1px 3px rgba(20,30,60,0.06);
-    gap:0;
-    flex-wrap:wrap;
-    row-gap:14px;
-  }
-  .doc-info{display:flex;align-items:center;gap:14px;min-width:230px;flex:1 1 230px;}
-  .doc-avatar{width:52px;height:52px;border-radius:50%;overflow:hidden;background:#f1c9a8;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-  .doc-avatar svg{width:100%;height:100%;}
-  .doc-name{font-weight:700;font-size:15.5px;color:var(--text-dark);}
-  .doc-role{font-size:13px;color:var(--blue);font-weight:600;}
-  .card-divider{width:1px;align-self:stretch;background:var(--border);margin:0 26px;}
-  .info-block{display:flex;align-items:flex-start;gap:10px;flex:1 1 190px;min-width:170px;}
-  .info-block .ic-circle{width:30px;height:30px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
-  .info-block .ic-circle svg{width:16px;height:16px;stroke:var(--blue);}
-  .info-title{font-size:12.5px;font-weight:700;color:var(--text-dark);margin-bottom:4px;}
-  .info-line{font-size:12.5px;color:var(--text-muted);line-height:1.5;}
-  .info-line.warn{color:#c0392b;font-weight:600;}
-
-  /* table */
-  .schedule-wrap{
-    background:#fff;
-    border-radius:14px;
-    box-shadow:0 1px 3px rgba(20,30,60,0.06);
-    overflow-x:auto;
-    padding-bottom:6px;
-  }
-  table{border-collapse:collapse;width:100%;min-width:920px;}
-  thead th{
-    padding:14px 6px 10px 6px;
-    text-align:center;
-    font-size:13px;
-    border-bottom:2px solid var(--border);
-    background:#fbfbfd;
-  }
-  thead th .dow{font-weight:700;font-size:13.5px;}
-  thead th .dm{font-weight:700;font-size:13px;color:var(--text-dark);}
-  thead th .status{font-size:10.5px;font-weight:600;display:block;margin-top:2px;}
-  th.srno, th.timecol{color:var(--text-dark);font-weight:700;}
-  td{
-    text-align:center;
-    font-size:12.5px;
-    padding:0;
-    border-bottom:1px solid #eef0f4;
-    height:34px;
-    position:relative;
-  }
-  td.srno{color:var(--text-muted);font-weight:600;}
-  td.timecol{color:var(--text-dark);font-weight:600;background:#fbfbfd;}
-  .cell{
-    display:flex;align-items:center;justify-content:center;
-    height:34px;width:100%;
-    font-weight:600;
-    cursor:default;
-    user-select:none;
-  }
-  .cell.dash{color:#b9bfcc;}
-  .cell.past{background:var(--past);color:#fff;}
-  .cell.past svg{width:13px;height:13px;}
-  .cell.unavail{background:#e7e9ee;color:#aeb4c2;}
-  .cell.avail{background:#fff;color:var(--green);border:1px solid #eef2ea;cursor:pointer;}
-  .cell.avail:hover{background:#f2f8ef;}
-  .cell.mine{background:var(--mine);color:#5c4300;cursor:pointer;}
-  .cell.reserved{color:var(--green);background:#fff;}
-  .ellipsis-row td{height:20px;color:var(--text-muted);font-weight:700;text-align:center;background:#fff;}
-
-  .footnote{
-    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-    padding:16px 24px;font-size:12.5px;color:var(--text-muted);
-  }
-  .footnote .sep{width:1px;height:14px;background:var(--border);margin:0 4px;}
-  .footnote svg{width:15px;height:15px;flex-shrink:0;color:var(--blue);}
-
-  @media (max-width:900px){
-    .sidebar{display:none;}
-    .main{padding:16px;}
-    .topbar{flex-wrap:wrap;justify-content:center;gap:16px;}
-  }
-</style>
-</head>
-<body>
-<div class="app">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-logo">
-        <img src="logo.svg" alt="Health Center logo">
-      </div>
-      <div class="brand-text">Indian Institute of<br>Technology Gandhinagar</div>
-    </div>
-    <nav class="nav">
-      <button class="nav-item active" data-tab="bookings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-        <span class="nav-text">Bookings</span>
-      </button>
-      <button class="nav-item" data-tab="mybookings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l3 3v17H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
-        <span class="nav-text">My Bookings</span>
-      </button>
-      <button class="nav-item" data-tab="help">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.7-2.5 2-2.5 3.5"/><circle cx="12" cy="17" r=".3" fill="currentColor"/></svg>
-        <span class="nav-text">Help</span>
-      </button>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="foot-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg>
-      </div>
-      <h4>IIT Gandhinagar<br>Health Centre</h4>
-      <p>Caring for a<br>Healthier Community</p>
-    </div>
-
-    <!-- TOGGLE SIDEBAR BUTTON -->
-    <button class="toggle-btn" id="toggleSidebarBtn">
-      <svg class="toggle-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <polyline points="15 18 9 12 15 6"></polyline>
-      </svg>
-      <span class="toggle-text">Hide Sidebar</span>
-    </button>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div class="top-item">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
-        <div>
-          <div class="label" id="userName">Vishnu Periyannan P</div>
-          <div class="sub"><span id="userRoll">26110349</span> &nbsp;User / Roll ID</div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="top-item">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div>
-        <div>
-          <div class="label" id="memberId">6722</div>
-          <div class="sub">Member ID</div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="top-item">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div>
-        <div>
-          <div class="label" id="todayDate">08-08-2026</div>
-          <div class="sub" id="todayTime">14:20:30</div>
-        </div>
-      </div>
-      <button class="logout-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
-        Logout
-      </button>
-    </div>
-
-    <!-- CONTROL BAR -->
-    <div class="controlbar">
-      <span class="field-label">Doctor</span>
-      <select class="doctor-select" id="doctorSelect">
-        <option>Dr. Vinita Shetty (Physician) 09:00-13:00 &amp; 13:30-17:30</option>
-        <option>Dr. Arjun Mehta (Dentist) 10:00-14:00 &amp; 15:00-18:00</option>
-        <option>Dr. Sana Iyer (Physiotherapist) 09:00-12:00 &amp; 14:00-17:00</option>
-      </select>
-
-      <div class="week-nav">
-        <button class="nav-arrow" id="prevWeek">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <div class="week-range">
-          <div class="dates" id="weekRangeLabel">02/08/2026 - 08/08/2026</div>
-          <div class="tag" id="weekTag">(This Week)</div>
-        </div>
-        <button class="nav-arrow" id="nextWeek">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-      </div>
-
-      <div class="jump-wrap">
-        <span class="field-label">Jump To Date :</span>
-        <div class="jump-input">
-          <input type="text" id="jumpDate" placeholder="DD/MM/YYYY">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- LEGEND -->
-    <div class="legend">
-      <div class="legend-item"><span class="swatch past"></span>Past Reservations</div>
-      <div class="legend-item"><span class="swatch unavail"></span>Unavailable</div>
-      <div class="legend-item"><span class="swatch mine"></span>My Reservations</div>
-      <div class="legend-item"><span class="swatch reserved"></span>Reserved</div>
-      <div class="legend-item"><span class="swatch free"></span>Available Slot</div>
-    </div>
-
-    <!-- DOCTOR CARD -->
-    <div class="doctor-card">
-      <div class="doc-info">
-        <div class="doc-avatar">
-          <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#f6d3ae"/><circle cx="32" cy="26" r="11" fill="#3a2a20"/><path d="M14 58c2-12 10-18 18-18s16 6 18 18" fill="#2f6fb0"/><circle cx="32" cy="30" r="9" fill="#f6d3ae"/></svg>
-        </div>
-        <div>
-          <div class="doc-name">Dr. Vinita Shetty</div>
-          <div class="doc-role">Physician</div>
-        </div>
-      </div>
-      <div class="card-divider"></div>
-      <div class="info-block">
-        <div class="ic-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-        <div>
-          <div class="info-title">Working Hours</div>
-          <div class="info-line">Morning Shift &nbsp;&nbsp;09:00 - 13:00</div>
-          <div class="info-line">Afternoon Shift &nbsp;13:30 - 17:30</div>
-        </div>
-      </div>
-      <div class="card-divider"></div>
-      <div class="info-block">
-        <div class="ic-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
-        <div>
-          <div class="info-title">Lunch / Break</div>
-          <div class="info-line">13:00 - 13:50</div>
-          <div class="info-line warn">Unavailable</div>
-        </div>
-      </div>
-      <div class="card-divider"></div>
-      <div class="info-block">
-        <div class="ic-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-        <div>
-          <div class="info-title">Slot Duration</div>
-          <div class="info-line">10 minutes</div>
-          <div class="info-line">per slot</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SCHEDULE TABLE -->
-    <div class="schedule-wrap">
-      <table id="scheduleTable">
-        <thead>
-          <tr id="tableHeadRow">
-            <th class="srno">Sr.<br>No.</th>
-            <th class="timecol">Time</th>
-            <!-- day headers injected by JS -->
-          </tr>
-        </thead>
-        <tbody id="tableBody">
-          <!-- rows injected by JS -->
-        </tbody>
-      </table>
-    </div>
-
-    <div class="footnote">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
-      Lunch / Break Period (13:00 - 13:50) is unavailable across all working days.
-      <span class="sep"></span>
-      Weekends (Saturday &amp; Sunday) are unavailable.
-    </div>
-
-    <!-- COPYRIGHT NOTICE FOOTER -->
-    <footer class="main-footer">
-      © 2026 IIT Gandhinagar | GSTIN: 24AAATI7352M1ZF
-    </footer>
-  </main>
-</div>
-
-<script>
-/* ---------- Config ---------- */
-const DAYS = [
-  { dow:'Sun', date:'02/08', status:'(Unavailable)', color:'sun' },
-  { dow:'Mon', date:'03/08', status:'(Fully Booked)', color:'week' },
-  { dow:'Tue', date:'04/08', status:'(Partially Available)', color:'week' },
-  { dow:'Wed', date:'05/08', status:'(Fully Booked)', color:'week' },
-  { dow:'Thu', date:'06/08', status:'(Fully Booked)', color:'week' },
-  { dow:'Fri', date:'07/08', status:'(Partially Available)', color:'week' },
-  { dow:'Sat', date:'08/08', status:'(Unavailable)', color:'sun' },
-];
-
-// Generate 10-minute slots 09:00 - 17:30, minus lunch 13:00-13:50
-function genSlots(){
-  const slots = [];
-  let h=9,m=0;
-  while(h<17 || (h===17 && m<=30)){
-    const isLunch = (h===13) && (m<50);
-    if(!isLunch){
-      slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IIT Gandhinagar Health Centre — Bookings</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <style>
+    :root {
+      --navy: #0d1b3e;
+      --navy-dark: #0a1530;
+      --blue: #1f4fd8;
+      --blue-light: #eaf0ff;
+      --past: #0d2158;
+      --unavail: #c9cdd6;
+      --mine: #f5c344;
+      --reserved: #1c7a3d;
+      --available-border: #d7dbe4;
+      --text-dark: #1b2233;
+      --text-muted: #6b7280;
+      --sun-sat: #c0392b;
+      --weekday: #1f4fd8;
+      --green: #1c7a3d;
+      --border: #e4e7ee;
+      --bg: #f3f4f7;
     }
-    m+=10;
-    if(m>=60){m=0;h++;}
-  }
-  return slots;
-}
-const SLOTS = genSlots();
 
-// status per day per slot: 'dash','past','unavail','avail','mine','reserved'
-// Build to roughly match the screenshot.
-function buildDayStatus(dayIndex){
-  const status = {};
-  if(dayIndex===0 || dayIndex===6){ // Sun / Sat fully unavailable
-    SLOTS.forEach(s=> status[s]='dash');
-    return status;
-  }
-  SLOTS.forEach(s=>{
-    if(s.startsWith('13:') ) { status[s]='dash'; return; } // lunch/afternoon before 13:30 handled below
-    status[s]='unavail';
-  });
+    * {
+      box-sizing: border-box;
+    }
 
-  if(dayIndex===1){ // Mon fully booked (past)
-    SLOTS.forEach(s=>{
-      if(s < '13:00' || s>='13:30'){ status[s]='past'; }
-    });
-    status['14:30']='mine';
-  }
-  if(dayIndex===2){ // Tue partially available
-    SLOTS.forEach(s=>{
-      if(s < '13:00' ) status[s]='past';
-    });
-    ['10:10','10:40','10:50','11:10','11:20'].forEach(s=> status[s]='reserved');
-    SLOTS.filter(s=> s>='13:30').forEach(s=> status[s]='dash');
-  }
-  if(dayIndex===3){ // Wed fully booked
-    SLOTS.forEach(s=>{ if(s<'13:00' || s>='13:30') status[s]='past'; });
-  }
-  if(dayIndex===4){ // Thu fully booked
-    SLOTS.forEach(s=>{ if(s<'13:00' || s>='13:30') status[s]='past'; });
-  }
-  if(dayIndex===5){ // Fri partially available
-    status['09:00']='past';
-    ['09:10','09:50'].forEach(s=> status[s]='avail');
-    status['11:00']='mine';
-    ['11:10','11:20','11:30','12:00'].forEach(s=> status[s]='reserved');
-    status['11:40']='dash'; status['11:50']='dash';
-    ['14:00','14:10','14:20','14:30'].forEach(s=> status[s]='avail');
-    SLOTS.filter(s=> s>='14:40').forEach(s=> status[s]='dash');
-    SLOTS.filter(s=> s>='09:00' && s<'09:10').forEach(()=>{});
-  }
-  return status;
-}
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text-dark);
+    }
 
-const dayStatuses = DAYS.map((d,i)=> buildDayStatus(i));
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
 
-function iconLock(){
-  return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 10V8a6 6 0 1 1 12 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h8V8a4 4 0 1 0-8 0z"/></svg>`;
-}
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, var(--navy) 0%, var(--navy-dark) 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 22px 18px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-function renderHead(){
-  const row = document.getElementById('tableHeadRow');
-  // remove any existing day th
-  row.querySelectorAll('th.dayth').forEach(el=>el.remove());
-  DAYS.forEach(d=>{
-    const th = document.createElement('th');
-    th.className='dayth';
-    const colorClass = d.color==='sun' ? 'var(--sun-sat)' : 'var(--weekday)';
-    th.innerHTML = `<span class="dow" style="color:${colorClass}">${d.dow}</span><br><span class="dm">${d.date}</span><span class="status" style="color:${d.color==='sun'?'var(--sun-sat)':'var(--text-muted)'}">${d.status}</span>`;
-    row.appendChild(th);
-  });
-}
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
 
-function cellHtml(day, dIndex, slot){
-  const st = dayStatuses[dIndex][slot];
-  if(st==='dash') return `<div class="cell dash">—</div>`;
-  if(st==='past') return `<div class="cell past">${iconLock()}</div>`;
-  if(st==='unavail') return `<div class="cell unavail">—</div>`;
-  if(st==='avail') return `<div class="cell avail" data-day="${dIndex}" data-slot="${slot}">${slot}</div>`;
-  if(st==='mine') return `<div class="cell mine" data-day="${dIndex}" data-slot="${slot}">${slot}</div>`;
-  if(st==='reserved') return `<div class="cell reserved">${slot}</div>`;
-  return `<div class="cell dash">—</div>`;
-}
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-function renderBody(){
-  const body = document.getElementById('tableBody');
-  body.innerHTML='';
-  SLOTS.forEach((slot, idx)=>{
-    // Insert an ellipsis row after the 12th visible row for compactness (matches screenshot style), skip actual for simplicity: show all
-    const tr = document.createElement('tr');
-    let rowHtml = `<td class="srno">${idx+1}</td><td class="timecol">${slot}</td>`;
-    DAYS.forEach((d,dIndex)=>{
-      rowHtml += `<td>${cellHtml(d,dIndex,slot)}</td>`;
-    });
-    tr.innerHTML = rowHtml;
-    body.appendChild(tr);
-  });
-}
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+    }
 
-function attachCellEvents(){
-  document.querySelectorAll('.cell.avail').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      const dIndex = el.getAttribute('data-day');
-      const slot = el.getAttribute('data-slot');
-      dayStatuses[dIndex][slot] = 'mine';
-      renderBody();
-      attachCellEvents();
-    });
-  });
-  document.querySelectorAll('.cell.mine').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      const dIndex = el.getAttribute('data-day');
-      const slot = el.getAttribute('data-slot');
-      if(confirm('Cancel this reservation?')){
-        dayStatuses[dIndex][slot] = 'avail';
-        renderBody();
-        attachCellEvents();
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 4px 26px 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 18px;
+      transition: gap 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), justify-content 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .brand-logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+    }
+
+    .brand-logo svg {
+      width: 30px;
+      height: 30px;
+    }
+
+    .brand-logo img {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+    }
+
+    .brand-text {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.25;
+      transition: opacity 0.2s ease, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      max-width: 180px;
+      overflow: hidden;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #dbe1f5;
+      background: transparent;
+      border: none;
+      transition: background .15s ease, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), gap 0.3s cubic-bezier(0.4, 0, 0.2, 1), justify-content 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-item svg {
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
+    }
+
+    .nav-item.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .nav-item:not(.active):hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-text {
+      transition: opacity 0.2s ease, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      max-width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      display: inline-block;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 18px 16px;
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      max-height: 250px;
+    }
+
+    .sidebar-footer .foot-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-footer .foot-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: #fff;
+    }
+
+    .sidebar-footer h4 {
+      margin: 0 0 8px 0;
+      font-size: 14.5px;
+      font-weight: 700;
+    }
+
+    .sidebar-footer p {
+      margin: 0;
+      font-size: 12.5px;
+      color: #b9c1da;
+      line-height: 1.5;
+    }
+
+    .foot-illustration {
+      margin-top: 16px;
+      opacity: .5;
+    }
+
+    /* TOGGLE SIDEBAR BUTTON */
+    .toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #dbe1f5;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: 16px;
+      transition: background .15s ease, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), gap 0.3s cubic-bezier(0.4, 0, 0.2, 1), justify-content 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      outline: none;
+      text-align: left;
+      width: 100%;
+    }
+
+    .toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .toggle-arrow {
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
+      stroke: currentColor;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .toggle-text {
+      transition: opacity 0.2s ease, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      max-width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      opacity: 1;
+    }
+
+    /* COLLAPSED STATES */
+    .sidebar.collapsed {
+      width: 78px;
+      padding: 22px 12px;
+    }
+
+    .sidebar.collapsed .brand {
+      gap: 0;
+      justify-content: center;
+      padding: 6px 0 26px 0;
+    }
+
+    .sidebar.collapsed .brand-text {
+      opacity: 0;
+      max-width: 0;
+      pointer-events: none;
+      margin: 0;
+    }
+
+    .sidebar.collapsed .nav-text {
+      opacity: 0;
+      max-width: 0;
+      pointer-events: none;
+    }
+
+    .sidebar.collapsed .nav-item {
+      justify-content: center;
+      padding: 12px 0;
+      gap: 0;
+    }
+
+    .sidebar.collapsed .sidebar-footer {
+      opacity: 0;
+      max-height: 0;
+      padding: 0;
+      margin: 0;
+      border-color: transparent;
+      pointer-events: none;
+    }
+
+    .sidebar.collapsed .toggle-btn {
+      margin-top: auto;
+      justify-content: center;
+      padding: 12px 0;
+      gap: 0;
+    }
+
+    .sidebar.collapsed .toggle-text {
+      opacity: 0;
+      max-width: 0;
+      pointer-events: none;
+    }
+
+    .sidebar.collapsed .toggle-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* MAIN */
+    .main {
+      flex: 1;
+      padding: 22px 30px 40px 30px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-footer {
+      margin-top: auto;
+      padding-top: 24px;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      font-size: 13.5px;
+      color: var(--text-muted);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 34px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 14px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06);
+    }
+
+    .top-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .top-item .ic {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .top-item .ic svg {
+      width: 19px;
+      height: 19px;
+      stroke: var(--blue);
+    }
+
+    .top-item .label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.3;
+    }
+
+    .top-item .sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .divider {
+      width: 1px;
+      height: 34px;
+      background: var(--border);
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #cfd6e6;
+      background: #fff;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 13.5px;
+      padding: 9px 16px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    .logout-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .logout-btn:hover {
+      background: var(--blue-light);
+    }
+
+    /* control bar */
+    .controlbar {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px 22px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06);
+      flex-wrap: wrap;
+    }
+
+    .field-label {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .doctor-select {
+      flex: 1 1 340px;
+      min-width: 260px;
+      padding: 10px 14px;
+      border-radius: 9px;
+      border: 1px solid #d7dbe4;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .week-nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav-arrow {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid #d7dbe4;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-dark);
+      flex-shrink: 0;
+    }
+
+    .nav-arrow:hover {
+      background: var(--blue-light);
+    }
+
+    .nav-arrow svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .week-range {
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .week-range .dates {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-dark);
+    }
+
+    .week-range .tag {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .jump-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .jump-input {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .jump-input input {
+      padding: 9px 34px 9px 12px;
+      border-radius: 9px;
+      border: 1px solid #d7dbe4;
+      font-size: 13.5px;
+      width: 130px;
+    }
+
+    .jump-input svg {
+      position: absolute;
+      right: 10px;
+      width: 15px;
+      height: 15px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* legend */
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 14px 22px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06);
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .swatch {
+      width: 17px;
+      height: 17px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .swatch.past {
+      background: var(--past);
+    }
+
+    .swatch.unavail {
+      background: #c9cdd6;
+    }
+
+    .swatch.mine {
+      background: var(--mine);
+    }
+
+    .swatch.reserved {
+      background: var(--reserved);
+    }
+
+    .swatch.free {
+      background: #fff;
+      border: 1px solid #b9c0d1;
+    }
+
+    /* doctor card */
+    .doctor-card {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 24px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06);
+      gap: 0;
+      flex-wrap: wrap;
+      row-gap: 14px;
+    }
+
+    .doc-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 230px;
+      flex: 1 1 230px;
+    }
+
+    .doc-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #f1c9a8;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .doc-avatar svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .doc-name {
+      font-weight: 700;
+      font-size: 15.5px;
+      color: var(--text-dark);
+    }
+
+    .doc-role {
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .card-divider {
+      width: 1px;
+      align-self: stretch;
+      background: var(--border);
+      margin: 0 26px;
+    }
+
+    .info-block {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      flex: 1 1 190px;
+      min-width: 170px;
+    }
+
+    .info-block .ic-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .info-block .ic-circle svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--blue);
+    }
+
+    .info-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .info-line {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .info-line.warn {
+      color: #c0392b;
+      font-weight: 600;
+    }
+
+    /* table */
+    .schedule-wrap {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06);
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 920px;
+    }
+
+    thead th {
+      padding: 14px 6px 10px 6px;
+      text-align: center;
+      font-size: 13px;
+      border-bottom: 2px solid var(--border);
+      background: #fbfbfd;
+    }
+
+    thead th .dow {
+      font-weight: 700;
+      font-size: 13.5px;
+    }
+
+    thead th .dm {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text-dark);
+    }
+
+    thead th .status {
+      font-size: 10.5px;
+      font-weight: 600;
+      display: block;
+      margin-top: 2px;
+    }
+
+    th.srno,
+    th.timecol {
+      color: var(--text-dark);
+      font-weight: 700;
+    }
+
+    td {
+      text-align: center;
+      font-size: 12.5px;
+      padding: 0;
+      border-bottom: 1px solid #eef0f4;
+      height: 34px;
+      position: relative;
+    }
+
+    td.srno {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    td.timecol {
+      color: var(--text-dark);
+      font-weight: 600;
+      background: #fbfbfd;
+    }
+
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 34px;
+      width: 100%;
+      font-weight: 600;
+      cursor: default;
+      user-select: none;
+    }
+
+    .cell.dash {
+      color: #b9bfcc;
+    }
+
+    .cell.past {
+      background: var(--past);
+      color: #fff;
+    }
+
+    .cell.past svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .cell.unavail {
+      background: #e7e9ee;
+      color: #aeb4c2;
+    }
+
+    .cell.avail {
+      background: #fff;
+      color: var(--green);
+      border: 1px solid #eef2ea;
+      cursor: pointer;
+    }
+
+    .cell.avail:hover {
+      background: #f2f8ef;
+    }
+
+    .cell.mine {
+      background: var(--mine);
+      color: #5c4300;
+      cursor: pointer;
+    }
+
+    .cell.reserved {
+      color: var(--green);
+      background: #fff;
+    }
+
+    .ellipsis-row td {
+      height: 20px;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-align: center;
+      background: #fff;
+    }
+
+    .footnote {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 16px 24px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .footnote .sep {
+      width: 1px;
+      height: 14px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    .footnote svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      color: var(--blue);
+    }
+
+    @media (max-width:900px) {
+      .sidebar {
+        display: none;
       }
+
+      .main {
+        padding: 16px;
+      }
+
+      .topbar {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="logo.svg" alt="Health Center logo">
+        </div>
+        <div class="brand-text">Indian Institute of<br>Technology Gandhinagar</div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-tab="bookings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="5" width="18" height="16" rx="2" />
+            <path d="M8 3v4M16 3v4M3 10h18" />
+          </svg>
+          <span class="nav-text">Bookings</span>
+        </button>
+        <button class="nav-item" data-tab="mybookings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2h9l3 3v17H6z" />
+            <path d="M9 8h6M9 12h6M9 16h4" />
+          </svg>
+          <span class="nav-text">My Bookings</span>
+        </button>
+        <button class="nav-item" data-tab="help">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.7-2.5 2-2.5 3.5" />
+            <circle cx="12" cy="17" r=".3" fill="currentColor" />
+          </svg>
+          <span class="nav-text">Help</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="foot-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h4l2-6 4 12 2-6h6" />
+          </svg>
+        </div>
+        <h4>IIT Gandhinagar<br>Health Centre</h4>
+        <p>Caring for a<br>Healthier Community</p>
+      </div>
+
+      <!-- TOGGLE SIDEBAR BUTTON -->
+      <button class="toggle-btn" id="toggleSidebarBtn">
+        <svg class="toggle-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span class="toggle-text">Hide Sidebar</span>
+      </button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- TOP BAR -->
+      <div class="topbar">
+        <div class="top-item">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+            </svg></div>
+          <div>
+            <div class="label" id="userName">Vishnu Periyannan P</div>
+            <div class="sub"><span id="userRoll">26110349</span> &nbsp;User / Roll ID</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="top-item">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="5" width="18" height="16" rx="2" />
+              <path d="M8 3v4M16 3v4M3 10h18" />
+            </svg></div>
+          <div>
+            <div class="label" id="memberId">6722</div>
+            <div class="sub">Member ID</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="top-item">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="17" rx="2" />
+              <path d="M3 9h18M8 2v4M16 2v4" />
+            </svg></div>
+          <div>
+            <div class="label" id="todayDate">08-08-2026</div>
+            <div class="sub" id="todayTime">14:20:30</div>
+          </div>
+        </div>
+        <button class="logout-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <path d="M16 17l5-5-5-5M21 12H9" />
+          </svg>
+          Logout
+        </button>
+      </div>
+
+      <!-- CONTROL BAR -->
+      <div class="controlbar">
+        <span class="field-label">Doctor</span>
+        <select class="doctor-select" id="doctorSelect">
+          <option>Dr. Vinita Shetty (Physician) 09:00-13:00 &amp; 13:30-17:30</option>
+          <option>Dr. Arjun Mehta (Dentist) 10:00-14:00 &amp; 15:00-18:00</option>
+          <option>Dr. Sana Iyer (Physiotherapist) 09:00-12:00 &amp; 14:00-17:00</option>
+        </select>
+
+        <div class="week-nav">
+          <button class="nav-arrow" id="prevWeek">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <div class="week-range">
+            <div class="dates" id="weekRangeLabel">02/08/2026 - 08/08/2026</div>
+            <div class="tag" id="weekTag">(This Week)</div>
+          </div>
+          <button class="nav-arrow" id="nextWeek">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="jump-wrap">
+          <span class="field-label">Jump To Date :</span>
+          <div class="jump-input">
+            <input type="text" id="jumpDate" placeholder="DD/MM/YYYY">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="17" rx="2" />
+              <path d="M3 9h18M8 2v4M16 2v4" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEGEND -->
+      <div class="legend">
+        <div class="legend-item"><span class="swatch past"></span>Past Reservations</div>
+        <div class="legend-item"><span class="swatch unavail"></span>Unavailable</div>
+        <div class="legend-item"><span class="swatch mine"></span>My Reservations</div>
+        <div class="legend-item"><span class="swatch reserved"></span>Reserved</div>
+        <div class="legend-item"><span class="swatch free"></span>Available Slot</div>
+      </div>
+
+      <!-- DOCTOR CARD -->
+      <div class="doctor-card">
+        <div class="doc-info">
+          <div class="doc-avatar">
+            <svg viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="32" fill="#f6d3ae" />
+              <circle cx="32" cy="26" r="11" fill="#3a2a20" />
+              <path d="M14 58c2-12 10-18 18-18s16 6 18 18" fill="#2f6fb0" />
+              <circle cx="32" cy="30" r="9" fill="#f6d3ae" />
+            </svg>
+          </div>
+          <div>
+            <div class="doc-name">Dr. Vinita Shetty</div>
+            <div class="doc-role">Physician</div>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="info-block">
+          <div class="ic-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 3" />
+            </svg></div>
+          <div>
+            <div class="info-title">Working Hours</div>
+            <div class="info-line">Morning Shift &nbsp;&nbsp;09:00 - 13:00</div>
+            <div class="info-line">Afternoon Shift &nbsp;13:30 - 17:30</div>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="info-block">
+          <div class="ic-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+            </svg></div>
+          <div>
+            <div class="info-title">Lunch / Break</div>
+            <div class="info-line">13:00 - 13:50</div>
+            <div class="info-line warn">Unavailable</div>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+        <div class="info-block">
+          <div class="ic-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 3" />
+            </svg></div>
+          <div>
+            <div class="info-title">Slot Duration</div>
+            <div class="info-line">10 minutes</div>
+            <div class="info-line">per slot</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCHEDULE TABLE -->
+      <div class="schedule-wrap">
+        <table id="scheduleTable">
+          <thead>
+            <tr id="tableHeadRow">
+              <th class="srno">Sr.<br>No.</th>
+              <th class="timecol">Time</th>
+              <!-- day headers injected by JS -->
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- rows injected by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footnote">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 8h.01M11 12h1v5h1" />
+        </svg>
+        Lunch / Break Period (13:00 - 13:50) is unavailable across all working days.
+        <span class="sep"></span>
+        Weekends (Saturday &amp; Sunday) are unavailable.
+      </div>
+
+      <!-- COPYRIGHT NOTICE FOOTER -->
+      <footer class="main-footer">
+        © 2026 IIT Gandhinagar | GSTIN: 24AAATI7352M1ZF
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    /* ---------- Config ---------- */
+    const DAYS = [
+      { dow: 'Sun', date: '02/08', status: '(Unavailable)', color: 'sun' },
+      { dow: 'Mon', date: '03/08', status: '(Fully Booked)', color: 'week' },
+      { dow: 'Tue', date: '04/08', status: '(Partially Available)', color: 'week' },
+      { dow: 'Wed', date: '05/08', status: '(Fully Booked)', color: 'week' },
+      { dow: 'Thu', date: '06/08', status: '(Fully Booked)', color: 'week' },
+      { dow: 'Fri', date: '07/08', status: '(Partially Available)', color: 'week' },
+      { dow: 'Sat', date: '08/08', status: '(Unavailable)', color: 'sun' },
+    ];
+
+    // Generate 10-minute slots 09:00 - 17:30, minus lunch 13:00-13:50
+    function genSlots() {
+      const slots = [];
+      let h = 9, m = 0;
+      while (h < 17 || (h === 17 && m <= 30)) {
+        const isLunch = (h === 13) && (m < 50);
+        if (!isLunch) {
+          slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+        }
+        m += 10;
+        if (m >= 60) { m = 0; h++; }
+      }
+      return slots;
+    }
+    const SLOTS = genSlots();
+
+    // status per day per slot: 'dash','past','unavail','avail','mine','reserved'
+    // Build to roughly match the screenshot.
+    function buildDayStatus(dayIndex) {
+      const status = {};
+      if (dayIndex === 0 || dayIndex === 6) { // Sun / Sat fully unavailable
+        SLOTS.forEach(s => status[s] = 'dash');
+        return status;
+      }
+      SLOTS.forEach(s => {
+        if (s.startsWith('13:')) { status[s] = 'dash'; return; } // lunch/afternoon before 13:30 handled below
+        status[s] = 'unavail';
+      });
+
+      if (dayIndex === 1) { // Mon fully booked (past)
+        SLOTS.forEach(s => {
+          if (s < '13:00' || s >= '13:30') { status[s] = 'past'; }
+        });
+        status['14:30'] = 'mine';
+      }
+      if (dayIndex === 2) { // Tue partially available
+        SLOTS.forEach(s => {
+          if (s < '13:00') status[s] = 'past';
+        });
+        ['10:10', '10:40', '10:50', '11:10', '11:20'].forEach(s => status[s] = 'reserved');
+        SLOTS.filter(s => s >= '13:30').forEach(s => status[s] = 'dash');
+      }
+      if (dayIndex === 3) { // Wed fully booked
+        SLOTS.forEach(s => { if (s < '13:00' || s >= '13:30') status[s] = 'past'; });
+      }
+      if (dayIndex === 4) { // Thu fully booked
+        SLOTS.forEach(s => { if (s < '13:00' || s >= '13:30') status[s] = 'past'; });
+      }
+      if (dayIndex === 5) { // Fri partially available
+        status['09:00'] = 'past';
+        ['09:10', '09:50'].forEach(s => status[s] = 'avail');
+        status['11:00'] = 'mine';
+        ['11:10', '11:20', '11:30', '12:00'].forEach(s => status[s] = 'reserved');
+        status['11:40'] = 'dash'; status['11:50'] = 'dash';
+        ['14:00', '14:10', '14:20', '14:30'].forEach(s => status[s] = 'avail');
+        SLOTS.filter(s => s >= '14:40').forEach(s => status[s] = 'dash');
+        SLOTS.filter(s => s >= '09:00' && s < '09:10').forEach(() => { });
+      }
+      return status;
+    }
+
+    const dayStatuses = DAYS.map((d, i) => buildDayStatus(i));
+
+    function iconLock() {
+      return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 10V8a6 6 0 1 1 12 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h8V8a4 4 0 1 0-8 0z"/></svg>`;
+    }
+
+    function renderHead() {
+      const row = document.getElementById('tableHeadRow');
+      // remove any existing day th
+      row.querySelectorAll('th.dayth').forEach(el => el.remove());
+      DAYS.forEach(d => {
+        const th = document.createElement('th');
+        th.className = 'dayth';
+        const colorClass = d.color === 'sun' ? 'var(--sun-sat)' : 'var(--weekday)';
+        th.innerHTML = `<span class="dow" style="color:${colorClass}">${d.dow}</span><br><span class="dm">${d.date}</span><span class="status" style="color:${d.color === 'sun' ? 'var(--sun-sat)' : 'var(--text-muted)'}">${d.status}</span>`;
+        row.appendChild(th);
+      });
+    }
+
+    function cellHtml(day, dIndex, slot) {
+      const st = dayStatuses[dIndex][slot];
+      if (st === 'dash') return `<div class="cell dash">—</div>`;
+      if (st === 'past') return `<div class="cell past">${iconLock()}</div>`;
+      if (st === 'unavail') return `<div class="cell unavail">—</div>`;
+      if (st === 'avail') return `<div class="cell avail" data-day="${dIndex}" data-slot="${slot}">${slot}</div>`;
+      if (st === 'mine') return `<div class="cell mine" data-day="${dIndex}" data-slot="${slot}">${slot}</div>`;
+      if (st === 'reserved') return `<div class="cell reserved">${slot}</div>`;
+      return `<div class="cell dash">—</div>`;
+    }
+
+    function renderBody() {
+      const body = document.getElementById('tableBody');
+      body.innerHTML = '';
+      SLOTS.forEach((slot, idx) => {
+        // Insert an ellipsis row after the 12th visible row for compactness (matches screenshot style), skip actual for simplicity: show all
+        const tr = document.createElement('tr');
+        let rowHtml = `<td class="srno">${idx + 1}</td><td class="timecol">${slot}</td>`;
+        DAYS.forEach((d, dIndex) => {
+          rowHtml += `<td>${cellHtml(d, dIndex, slot)}</td>`;
+        });
+        tr.innerHTML = rowHtml;
+        body.appendChild(tr);
+      });
+    }
+
+    function attachCellEvents() {
+      document.querySelectorAll('.cell.avail').forEach(el => {
+        el.addEventListener('click', () => {
+          const dIndex = el.getAttribute('data-day');
+          const slot = el.getAttribute('data-slot');
+          dayStatuses[dIndex][slot] = 'mine';
+          renderBody();
+          attachCellEvents();
+        });
+      });
+      document.querySelectorAll('.cell.mine').forEach(el => {
+        el.addEventListener('click', () => {
+          const dIndex = el.getAttribute('data-day');
+          const slot = el.getAttribute('data-slot');
+          if (confirm('Cancel this reservation?')) {
+            dayStatuses[dIndex][slot] = 'avail';
+            renderBody();
+            attachCellEvents();
+          }
+        });
+      });
+    }
+
+    renderHead();
+    renderBody();
+    attachCellEvents();
+
+    /* Live clock */
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('todayTime').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    }
+    setInterval(updateClock, 1000);
+
+    /* Week nav (visual only - cycles a label) */
+    let weekOffset = 0;
+    document.getElementById('prevWeek').addEventListener('click', () => {
+      weekOffset--;
+      document.getElementById('weekTag').textContent = weekOffset === 0 ? '(This Week)' : (weekOffset < 0 ? '(Past Week)' : '(Upcoming Week)');
     });
-  });
-}
+    document.getElementById('nextWeek').addEventListener('click', () => {
+      weekOffset++;
+      document.getElementById('weekTag').textContent = weekOffset === 0 ? '(This Week)' : (weekOffset < 0 ? '(Past Week)' : '(Upcoming Week)');
+    });
 
-renderHead();
-renderBody();
-attachCellEvents();
+    /* Sidebar nav switching (visual highlight only) */
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
 
-/* Live clock */
-function pad(n){return String(n).padStart(2,'0');}
-function updateClock(){
-  const now = new Date();
-  document.getElementById('todayTime').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-}
-setInterval(updateClock, 1000);
+    /* Sidebar Collapse Toggle & State Persistence */
+    const sidebar = document.querySelector('.sidebar');
+    const toggleBtn = document.getElementById('toggleSidebarBtn');
+    if (sidebar && toggleBtn) {
+      // Restore state from localStorage
+      const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+      if (isCollapsed) {
+        sidebar.classList.add('collapsed');
+      }
 
-/* Week nav (visual only - cycles a label) */
-let weekOffset = 0;
-document.getElementById('prevWeek').addEventListener('click', ()=>{
-  weekOffset--;
-  document.getElementById('weekTag').textContent = weekOffset===0 ? '(This Week)' : (weekOffset<0? '(Past Week)':'(Upcoming Week)');
-});
-document.getElementById('nextWeek').addEventListener('click', ()=>{
-  weekOffset++;
-  document.getElementById('weekTag').textContent = weekOffset===0 ? '(This Week)' : (weekOffset<0? '(Past Week)':'(Upcoming Week)');
-});
-
-/* Sidebar nav switching (visual highlight only) */
-document.querySelectorAll('.nav-item').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-
-/* Sidebar Collapse Toggle & State Persistence */
-const sidebar = document.querySelector('.sidebar');
-const toggleBtn = document.getElementById('toggleSidebarBtn');
-if (sidebar && toggleBtn) {
-  // Restore state from localStorage
-  const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-  if (isCollapsed) {
-    sidebar.classList.add('collapsed');
-  }
-
-  toggleBtn.addEventListener('click', () => {
-    const collapsed = sidebar.classList.toggle('collapsed');
-    localStorage.setItem('sidebarCollapsed', collapsed);
-  });
-}
-</script>
+      toggleBtn.addEventListener('click', () => {
+        const collapsed = sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebarCollapsed', collapsed);
+      });
+    }
+  </script>
 </body>
+
 </html>
