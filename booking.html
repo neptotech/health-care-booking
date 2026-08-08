@@ -854,6 +854,194 @@
         gap: 16px;
       }
     }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(13, 27, 62, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-card {
+      background: #ffffff;
+      width: 90%;
+      max-width: 520px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(13, 27, 62, 0.15);
+      border: 1px solid rgba(228, 231, 238, 0.8);
+      overflow: hidden;
+      transform: scale(0.9);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+    .modal-card.small {
+      max-width: 440px;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      background: #fbfbfd;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      transition: color 0.15s ease;
+    }
+    .modal-close:hover {
+      color: var(--navy);
+    }
+    .modal-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .details-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .detail-row {
+      display: flex;
+      gap: 12px;
+    }
+    .detail-half {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .detail-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .detail-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      background: #f7f8fa;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #edf0f5;
+    }
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field-label-modal {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .modal-field input[type="text"],
+    .modal-field textarea {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #d7dbe4;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-dark);
+      background: #fff;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .modal-field input[type="text"]:focus,
+    .modal-field textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(31, 79, 216, 0.12);
+    }
+    .modal-field input[type="text"]:disabled {
+      background: #f7f8fa;
+      color: var(--text-muted);
+      cursor: not-allowed;
+      border-color: #edf0f5;
+    }
+    .modal-footer {
+      padding: 16px 24px;
+      background: #fbfbfd;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .btn-primary, .btn-danger, .btn-danger-disabled, .btn-secondary {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #173fae;
+    }
+    .btn-danger {
+      background: #c0392b;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background: #a93226;
+    }
+    .btn-danger-disabled {
+      background: #e4e7ee;
+      color: #a1a1aa;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: #fff;
+      color: var(--text-dark);
+      border: 1px solid #cfd6e6;
+    }
+    .btn-secondary:hover {
+      background: #f3f4f7;
+    }
   </style>
 </head>
 
@@ -1071,6 +1259,80 @@
     </main>
   </div>
 
+  <!-- BOOKING DETAILS MODAL -->
+  <div id="bookingModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Details of Reservation</h3>
+        <button class="modal-close" id="closeBookingModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="detail-label">User Name</span>
+            <span class="detail-value" id="modalUserName">Vishnu Periyannan P (26110349)</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Doctor Name</span>
+            <span class="detail-value" id="modalDoctorName">-</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">IITGN Medical Center (Central Arcade First Floor)</span>
+          </div>
+          <div class="detail-row">
+            <div class="detail-half">
+              <span class="detail-label">Start Date</span>
+              <span class="detail-value" id="modalStartDate">-</span>
+            </div>
+            <div class="detail-half">
+              <span class="detail-label">Start Time</span>
+              <span class="detail-value" id="modalStartTime">-</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-half">
+              <span class="detail-label">End Date</span>
+              <span class="detail-value" id="modalEndDate">-</span>
+            </div>
+            <div class="detail-half">
+              <span class="detail-label">End Time</span>
+              <span class="detail-value" id="modalEndTime">-</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label for="bookingSummary" class="field-label-modal">Summary*</label>
+          <input type="text" id="bookingSummary" placeholder="Enter reservation summary" required autocomplete="off">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="submitBookingBtn" class="btn-primary">Submit</button>
+        <button id="cancelReservationBtn" class="btn-danger" style="display: none;">Cancel Reservation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANCELLATION REASON MODAL -->
+  <div id="cancelReasonModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card small">
+      <div class="modal-header">
+        <h3>Cancel Reservation</h3>
+        <button class="modal-close" id="closeCancelReasonModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-field">
+          <label for="cancelReasonText" class="field-label-modal">Reason for Cancellation*</label>
+          <textarea id="cancelReasonText" placeholder="Please provide a reason for cancelling this reservation" required rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="confirmCancelBtn" class="btn-danger-disabled" disabled>Cancel Reservation</button>
+        <button id="backToDetailsBtn" class="btn-secondary">Go Back</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     /* ---------- Config ---------- */
     const MOCK_TODAY = new Date('2026-08-08T16:11:36');
@@ -1165,6 +1427,7 @@
       localStorage.setItem('slotLogicVersion', SLOT_LOGIC_VERSION);
     }
     let slotStatesMap = JSON.parse(localStorage.getItem('slotStatesMap')) || {};
+    let slotSummariesMap = JSON.parse(localStorage.getItem('slotSummariesMap')) || {};
     let weekMyReservationGenerated = JSON.parse(localStorage.getItem('weekMyReservationGenerated')) || {};
 
     /* ---------- Helpers ---------- */
@@ -1552,6 +1815,55 @@
       return `<div class="cell dash">Unavailable</div>`;
     }
 
+    /* ---------- Modal Helpers & State ---------- */
+    let activeBookingStateKey = null;
+    let activeBookingDIndex = null;
+    let activeBookingSlot = null;
+
+    function formatDisplayDate(date) {
+      const d = String(date.getDate()).padStart(2, '0');
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const y = date.getFullYear();
+      return `${d}/${m}/${y}`;
+    }
+
+    function addTenMinutes(timeStr) {
+      let [h, m] = timeStr.split(':').map(Number);
+      m += 10;
+      if (m >= 60) {
+        m -= 60;
+        h += 1;
+      }
+      if (h >= 24) {
+        h = 0;
+      }
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    }
+
+    function getDoctorDisplayString(doctor, date) {
+      if (!doctor) return '-';
+      const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      const dayName = dayNames[date.getDay()];
+      const item = doctor.schedule.find(s => s.days.includes(dayName));
+      const scheduleText = item ? `${item.start} to ${item.end}` : doctor.schedule.map(s => `${s.start} to ${s.end}`).join(' & ');
+      return `${doctor.name} (${doctor.role}) ${scheduleText}`;
+    }
+
+    function showModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.style.display = 'flex';
+      modal.offsetHeight; // trigger reflow
+      modal.classList.add('active');
+    }
+
+    function hideModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 250);
+    }
+
     /* ---------- Event Listeners ---------- */
     function attachCellEvents() {
       const body = document.getElementById('tableBody');
@@ -1569,18 +1881,47 @@
         const dateKey = formatDateKey(days[dIndex]);
         const stateKey = `${doctor.name}_${dateKey}_${slot}`;
 
+        activeBookingStateKey = stateKey;
+        activeBookingDIndex = dIndex;
+        activeBookingSlot = slot;
+
+        const dateObj = days[dIndex];
+        const dateStr = formatDisplayDate(dateObj);
+        const endTimeStr = addTenMinutes(slot);
+
+        // Populate User Info
+        const userNameVal = document.getElementById('userName').textContent.trim();
+        const userRollVal = document.getElementById('userRoll').textContent.trim();
+        document.getElementById('modalUserName').textContent = `${userNameVal} ${userRollVal}`;
+
+        // Populate Doctor Info
+        document.getElementById('modalDoctorName').textContent = getDoctorDisplayString(doctor, dateObj);
+        
+        // Populate Dates and Times
+        document.getElementById('modalStartDate').textContent = dateStr;
+        document.getElementById('modalStartTime').textContent = slot;
+        document.getElementById('modalEndDate').textContent = dateStr;
+        document.getElementById('modalEndTime').textContent = endTimeStr;
+
         if (cell.classList.contains('avail')) {
-          slotStatesMap[stateKey] = 'mine';
-          localStorage.setItem('slotStatesMap', JSON.stringify(slotStatesMap));
-          renderHead();
-          renderBody();
+          const summaryInput = document.getElementById('bookingSummary');
+          summaryInput.value = '';
+          summaryInput.disabled = false;
+          summaryInput.placeholder = 'Enter reservation summary';
+
+          document.getElementById('submitBookingBtn').style.display = 'block';
+          document.getElementById('cancelReservationBtn').style.display = 'none';
+
+          showModal('bookingModal');
         } else if (cell.classList.contains('mine')) {
-          if (confirm('Cancel this reservation?')) {
-            slotStatesMap[stateKey] = 'avail';
-            localStorage.setItem('slotStatesMap', JSON.stringify(slotStatesMap));
-            renderHead();
-            renderBody();
-          }
+          const summaryInput = document.getElementById('bookingSummary');
+          summaryInput.value = slotSummariesMap[stateKey] || '';
+          summaryInput.disabled = true;
+
+          document.getElementById('submitBookingBtn').style.display = 'none';
+          document.getElementById('cancelReservationBtn').style.display = 'block';
+
+          showModal('bookingModal');
         }
       };
     }
@@ -1681,6 +2022,86 @@
     window.addEventListener('blur', () => {
       for (const k in pressedKeys) {
         pressedKeys[k] = false;
+      }
+    });
+
+    /* Modal Button Listeners */
+    document.getElementById('closeBookingModal').addEventListener('click', () => {
+      hideModal('bookingModal');
+    });
+
+    document.getElementById('closeCancelReasonModal').addEventListener('click', () => {
+      hideModal('cancelReasonModal');
+    });
+
+    document.getElementById('backToDetailsBtn').addEventListener('click', () => {
+      hideModal('cancelReasonModal');
+      setTimeout(() => {
+        showModal('bookingModal');
+      }, 280);
+    });
+
+    document.getElementById('submitBookingBtn').addEventListener('click', () => {
+      const summaryInput = document.getElementById('bookingSummary');
+      const summaryText = summaryInput.value.trim();
+      if (!summaryText) {
+        alert('Summary is required.');
+        summaryInput.focus();
+        return;
+      }
+
+      if (activeBookingStateKey) {
+        slotStatesMap[activeBookingStateKey] = 'mine';
+        slotSummariesMap[activeBookingStateKey] = summaryText;
+        localStorage.setItem('slotStatesMap', JSON.stringify(slotStatesMap));
+        localStorage.setItem('slotSummariesMap', JSON.stringify(slotSummariesMap));
+
+        hideModal('bookingModal');
+        renderHead();
+        renderBody();
+      }
+    });
+
+    document.getElementById('bookingSummary').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !document.getElementById('bookingSummary').disabled) {
+        document.getElementById('submitBookingBtn').click();
+      }
+    });
+
+    document.getElementById('cancelReservationBtn').addEventListener('click', () => {
+      hideModal('bookingModal');
+      setTimeout(() => {
+        const reasonInput = document.getElementById('cancelReasonText');
+        reasonInput.value = '';
+        const confirmBtn = document.getElementById('confirmCancelBtn');
+        confirmBtn.disabled = true;
+        confirmBtn.className = 'btn-danger-disabled';
+        showModal('cancelReasonModal');
+      }, 280);
+    });
+
+    document.getElementById('cancelReasonText').addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      const confirmBtn = document.getElementById('confirmCancelBtn');
+      if (val.length > 0) {
+        confirmBtn.disabled = false;
+        confirmBtn.className = 'btn-danger';
+      } else {
+        confirmBtn.disabled = true;
+        confirmBtn.className = 'btn-danger-disabled';
+      }
+    });
+
+    document.getElementById('confirmCancelBtn').addEventListener('click', () => {
+      if (activeBookingStateKey) {
+        slotStatesMap[activeBookingStateKey] = 'avail';
+        delete slotSummariesMap[activeBookingStateKey];
+        localStorage.setItem('slotStatesMap', JSON.stringify(slotStatesMap));
+        localStorage.setItem('slotSummariesMap', JSON.stringify(slotSummariesMap));
+
+        hideModal('cancelReasonModal');
+        renderHead();
+        renderBody();
       }
     });
 
