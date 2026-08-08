@@ -690,7 +690,8 @@
     }
 
     table {
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       width: 100%;
       min-width: 920px;
     }
@@ -701,6 +702,11 @@
       font-size: 13px;
       border-bottom: 2px solid var(--border);
       background: #fbfbfd;
+      border-right: 1px solid #f0f2f7;
+    }
+
+    thead th:last-child {
+      border-right: none;
     }
 
     thead th .dow {
@@ -731,9 +737,14 @@
       text-align: center;
       font-size: 12.5px;
       padding: 0;
-      border-bottom: 1px solid #eef0f4;
+      border-bottom: 2px solid #6e6e6e11; /*#f0f2f7*/
+      border-right: 3px solid #6e6e6e11;
       height: 34px;
       position: relative;
+    }
+
+    td:last-child {
+      border-right: none;
     }
 
     td.srno {
@@ -757,6 +768,7 @@
       cursor: default;
       user-select: none;
       font-size: 11.5px;
+      border-radius: 2px;
     }
 
     /* Doctor not working this day/slot — hatched neutral */
@@ -1022,18 +1034,6 @@
             </div>
           </div>
         </div>
-        <div class="card-divider" id="lunchDivider"></div>
-        <div class="info-block" id="lunchBlock">
-          <div class="ic-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.7 21a2 2 0 0 1-3.4 0" />
-            </svg></div>
-          <div>
-            <div class="info-title">Lunch / Break</div>
-            <div class="info-line">13:00 - 13:50</div>
-            <div class="info-line warn">Unavailable</div>
-          </div>
-        </div>
         <div class="card-divider"></div>
         <div class="info-block">
           <div class="ic-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1252,9 +1252,6 @@
       return slotTimeStr >= item.start && slotTimeStr < item.end;
     }
 
-    function isLunchBreak(slotTimeStr) {
-      return slotTimeStr >= '13:00' && slotTimeStr < '13:50';
-    }
 
     function parseJumpDate(str) {
       let m = str.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
@@ -1309,11 +1306,6 @@
             return;
           }
 
-          // Lunch break → hatched unavailable
-          if (isLunchBreak(slot)) {
-            slotStatesMap[stateKey] = 'dash';
-            return;
-          }
 
           // ── Past weeks (weekOffset < 0) ──
           if (weekOffset < 0) {
@@ -1466,16 +1458,7 @@
       const hoursContainer = document.getElementById('docWorkingHours');
       hoursContainer.innerHTML = doctor.schedule.map(s => `<div class="info-line">${s.label}</div>`).join('');
 
-      const overlapsLunch = doctor.schedule.some(s => s.start < '13:50' && s.end > '13:00');
-      const lunchDivider = document.getElementById('lunchDivider');
-      const lunchBlock = document.getElementById('lunchBlock');
-      if (overlapsLunch) {
-        lunchDivider.style.display = 'block';
-        lunchBlock.style.display = 'flex';
-      } else {
-        lunchDivider.style.display = 'none';
-        lunchBlock.style.display = 'none';
-      }
+
     }
 
     function renderHead() {
@@ -1682,6 +1665,24 @@
         localStorage.setItem('sidebarCollapsed', collapsed);
       });
     }
+
+    /* Shift + R + E reset handler */
+    const pressedKeys = {};
+    window.addEventListener('keydown', (e) => {
+      pressedKeys[e.key.toLowerCase()] = true;
+      if (e.shiftKey && pressedKeys['r'] && pressedKeys['e']) {
+        localStorage.clear();
+        location.reload();
+      }
+    });
+    window.addEventListener('keyup', (e) => {
+      pressedKeys[e.key.toLowerCase()] = false;
+    });
+    window.addEventListener('blur', () => {
+      for (const k in pressedKeys) {
+        pressedKeys[k] = false;
+      }
+    });
 
     /* ---------- Initialization ---------- */
     populateDoctorSelect();
