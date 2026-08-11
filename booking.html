@@ -1244,6 +1244,154 @@
       color: var(--text-muted);
       font-weight: 600;
     }
+
+    .help-content {
+      display: none;
+    }
+
+    .help-shell {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 1px 3px rgba(20, 30, 60, 0.06);
+      overflow: hidden;
+    }
+
+    .help-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+      gap: 24px;
+      padding: 28px;
+      background: linear-gradient(135deg, #0d1b3e 0%, #1f4fd8 100%);
+      color: #fff;
+      align-items: center;
+    }
+
+    .help-hero h1 {
+      margin: 0 0 10px 0;
+      font-size: 30px;
+      line-height: 1.15;
+    }
+
+    .help-hero p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 760px;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .help-image-card {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 16px;
+      padding: 14px;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+
+    .help-image-placeholder {
+      min-height: 220px;
+      border-radius: 12px;
+      border: 1px dashed rgba(255, 255, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.92);
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .help-image-caption {
+      margin-top: 10px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .help-body {
+      padding: 26px 28px 30px 28px;
+      background: #fff;
+    }
+
+    .help-section-title {
+      margin: 0 0 14px 0;
+      font-size: 18px;
+      color: var(--text-dark);
+    }
+
+    .help-steps {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .help-faq {
+      margin-top: 28px;
+    }
+
+    .faq-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(20, 30, 60, 0.04);
+    }
+
+    .faq-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      color: var(--text-dark);
+      background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::after {
+      content: '+';
+      font-size: 20px;
+      line-height: 1;
+      color: var(--blue);
+      flex-shrink: 0;
+    }
+
+    .faq-item[open] summary::after {
+      content: '−';
+    }
+
+    .faq-answer {
+      padding: 0 18px 18px 18px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .faq-answer ul {
+      margin: 10px 0 0 18px;
+      padding: 0;
+    }
+
+    @media (max-width: 960px) {
+      .help-hero {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
@@ -1273,15 +1421,14 @@
           </svg>
           <span class="nav-text">My Bookings</span>
         </button>
-        <a class="nav-item" href="https://hcrs.iitgn.ac.in/slotbooking/help/Procedure_for_Booking_slots.pdf"
-          download="Procedure_for_Booking_slots.pdf" target="_blank" style="text-decoration: none;">
+        <button class="nav-item" data-tab="help">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="9" />
             <path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.7-2.5 2-2.5 3.5" />
             <circle cx="12" cy="17" r=".3" fill="currentColor" />
           </svg>
           <span class="nav-text">Help</span>
-        </a>
+        </button>
       </nav>
 
       <div class="sidebar-footer">
@@ -1472,6 +1619,77 @@
         </div>
         <div id="myBookingsList" class="my-bookings-list">
           <!-- Cards injected here -->
+        </div>
+      </div>
+
+      <!-- HELP CONTENT WRAPPER -->
+      <div id="helpContent" class="help-content">
+        <div class="help-shell">
+          <section class="help-hero">
+            <div>
+              <h1>Help and booking guidance</h1>
+              <p>
+                Use this page to understand how to browse doctor schedules, jump to a specific date, and create or
+                cancel reservations directly from the booking grid. The help content stays inside the same booking page
+                so you can switch back to bookings without losing context.
+              </p>
+            </div>
+            <!-- <div class="help-image-card">
+              <div class="help-image-placeholder" aria-label="Help illustration placeholder">
+                Uploaded help image will appear here.
+              </div>
+              <div class="help-image-caption">
+                Add your uploaded image here. Suggested alt text: booking help illustration for the reservation flow.
+              </div>
+            </div> -->
+          </section>
+
+          <div class="help-body">
+            <section>
+              <h2 class="help-section-title">How to use booking</h2>
+              <p class="help-steps">
+                Select a doctor from the dropdown, review the weekly timetable, and click on an available slot to open
+                the reservation details. Use Jump To Date to move the calendar to another week, and visit My Bookings to
+                review or cancel existing reservations.
+              </p>
+            </section>
+
+            <section class="help-faq">
+              <h2 class="help-section-title">Frequently Asked Questions</h2>
+              <div class="faq-list">
+                <details class="faq-item" open>
+                  <summary>How do I book an appointment?</summary>
+                  <div class="faq-answer">
+                    Choose a doctor, select an available time slot in the table, enter a short summary, and submit the
+                    reservation.
+                  </div>
+                </details>
+
+                <details class="faq-item">
+                  <summary>How do I jump to another week?</summary>
+                  <div class="faq-answer">
+                    Use the Jump To Date field near the top of the page and enter a date in DD/MM/YYYY format. The
+                    schedule will move to the week containing that date.
+                  </div>
+                </details>
+
+                <details class="faq-item">
+                  <summary>Where can I cancel a reservation?</summary>
+                  <div class="faq-answer">
+                    Open My Bookings, click the reservation card, and use the cancel option in the details dialog.
+                  </div>
+                </details>
+
+                <details class="faq-item">
+                  <summary>What if a slot looks unavailable?</summary>
+                  <div class="faq-answer">
+                    Unavailable slots are outside the doctor’s working hours or already reserved. Only available slots
+                    can be booked.
+                  </div>
+                </details>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
 
@@ -2350,10 +2568,6 @@
 
     document.querySelectorAll('.nav-item').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        // If it's a link (like Help), don't hijack tab state but let browser do default
-        if (btn.tagName === 'A' || btn.getAttribute('href')) {
-          return;
-        }
         e.preventDefault();
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -2362,10 +2576,16 @@
         if (tab === 'bookings') {
           document.getElementById('schedulerContent').style.display = 'block';
           document.getElementById('myBookingsContent').style.display = 'none';
+          document.getElementById('helpContent').style.display = 'none';
         } else if (tab === 'mybookings') {
           document.getElementById('schedulerContent').style.display = 'none';
           document.getElementById('myBookingsContent').style.display = 'block';
+          document.getElementById('helpContent').style.display = 'none';
           renderMyBookings();
+        } else if (tab === 'help') {
+          document.getElementById('schedulerContent').style.display = 'none';
+          document.getElementById('myBookingsContent').style.display = 'none';
+          document.getElementById('helpContent').style.display = 'block';
         }
       });
     });
