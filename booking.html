@@ -1336,8 +1336,8 @@
               <path d="M3 9h18M8 2v4M16 2v4" />
             </svg></div>
           <div>
-            <div class="label" id="todayDate">08-08-2026</div>
-            <div class="sub" id="todayTime">14:20:30</div>
+            <div class="label" id="todayDate"></div>
+            <div class="sub" id="todayTime"></div>
           </div>
         </div>
         <button class="logout-btn" id="logoutBtn">
@@ -1365,7 +1365,7 @@
               </svg>
             </button>
             <div class="week-range">
-              <div class="dates" id="weekRangeLabel">02/08/2026 - 08/08/2026</div>
+              <div class="dates" id="weekRangeLabel"></div>
               <div class="tag" id="weekTag">(This Week)</div>
             </div>
             <button class="nav-arrow" id="nextWeek">
@@ -1565,7 +1565,7 @@
     }
 
     /* ---------- Config ---------- */
-    const MOCK_TODAY = new Date('2026-08-08T16:11:36');
+    const MOCK_TODAY = new Date();
     const DAY_DOWS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const doctors = [
@@ -2210,10 +2210,16 @@
 
     /* Live clock */
     function pad(n) { return String(n).padStart(2, '0'); }
+    function formatTodayDate(date) {
+      return `${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()}`;
+    }
+
     function updateClock() {
       const now = new Date();
+      document.getElementById('todayDate').textContent = formatTodayDate(now);
       document.getElementById('todayTime').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     }
+    updateClock();
     setInterval(updateClock, 1000);
 
     /* Sidebar nav switching */
