@@ -728,6 +728,33 @@ if (sidebar && toggleBtn) {
 		localStorage.setItem("sidebarCollapsed", collapsed)
 	})
 }
+const THEME_KEY = "health-center-theme";
+
+function setTheme(theme) {
+	document.body.dataset.theme = theme;
+	localStorage.setItem(THEME_KEY, theme);
+	const isDark = theme === "dark";
+	const themeBtn = document.getElementById("themeToggleBtn");
+	const themeIcon = document.getElementById("themeToggleIcon");
+	const themeText = document.getElementById("themeToggleText");
+	if (themeIcon) {
+		themeIcon.innerHTML = isDark ? '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>' : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+	}
+	if (themeText) {
+		themeText.textContent = isDark ? "Light Theme" : "Dark Theme"
+	}
+	if (themeBtn) {
+		themeBtn.setAttribute("aria-label", isDark ? "Switch to light theme" : "Switch to dark theme")
+	}
+}
+const themeToggleBtn = document.getElementById("themeToggleBtn");
+if (themeToggleBtn) {
+	themeToggleBtn.addEventListener("click", () => {
+		const currentTheme = document.body.dataset.theme || "light";
+		setTheme(currentTheme === "dark" ? "light" : "dark")
+	})
+}
+setTheme(localStorage.getItem(THEME_KEY) || "light");
 const pressedKeys = {};
 window.addEventListener("keydown", e => {
 	pressedKeys[e.key.toLowerCase()] = true;

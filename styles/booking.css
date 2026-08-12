@@ -183,18 +183,21 @@ body {
 	font-size: 14.5px;
 	font-weight: 600;
 	gap: 12px;
-	margin-top: 16px;
+	margin-top: 10px;
 	outline: none;
 	padding: 12px 14px;
 	text-align: left;
 	transition: background .15s ease, padding .3s cubic-bezier(.4, 0, .2, 1), gap .3s cubic-bezier(.4, 0, .2, 1), justify-content .3s cubic-bezier(.4, 0, .2, 1);
 	width: 100%
 }
+.toggle-btn.theme-toggle-btn {
+	margin-top: 16px
+}
 .toggle-btn:hover {
 	background: hsla(0, 0%, 100%, .1);
 	color: #fff
 }
-.toggle-arrow {
+.theme-icon, .toggle-arrow {
 	flex-shrink: 0;
 	height: 19px;
 	stroke: currentColor;
@@ -241,8 +244,11 @@ body {
 .sidebar.collapsed .toggle-btn {
 	gap: 0;
 	justify-content: center;
-	margin-top: auto;
+	margin-top: 10px;
 	padding: 12px 0
+}
+.sidebar.collapsed .toggle-btn.theme-toggle-btn {
+	margin-top: auto
 }
 .sidebar.collapsed .toggle-text {
 	max-width: 0;
@@ -1154,4 +1160,266 @@ td.timecol {
 	.help-hero {
 		grid-template-columns: 1fr
 	}
+}
+body[data-theme=dark] {
+	--bg: #090d16;
+	--text-dark: #f1f5f9;
+	--text-muted: #94a3b8;
+	--border: #1e293b;
+	--blue: #3b82f6;
+	--blue-light: rgba(59, 130, 246, .16);
+	--weekday: #60a5fa;
+	--sun-sat: #f87171;
+	--green: #4ade80;
+	background: var(--bg);
+	color: var(--text-dark)
+}
+body[data-theme=dark] .sidebar {
+	background: linear-gradient(180deg, #0f172a, #090d16);
+	border-right: 1px solid #1e293b
+}
+body[data-theme=dark] .sidebar-footer {
+	background: hsla(0, 0%, 100%, .03);
+	border-color: hsla(0, 0%, 100%, .07)
+}
+body[data-theme=dark] .topbar {
+	background: #111827;
+	border: 1px solid #1e293b;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, .3)
+}
+body[data-theme=dark] .top-item .ic {
+	background: rgba(59, 130, 246, .16)
+}
+body[data-theme=dark] .top-item .ic svg {
+	stroke: #60a5fa
+}
+body[data-theme=dark] .divider {
+	background: #1e293b
+}
+body[data-theme=dark] .logout-btn {
+	background: #1e293b;
+	border-color: #334155;
+	color: #60a5fa
+}
+body[data-theme=dark] .logout-btn:hover {
+	background: rgba(59, 130, 246, .2);
+	color: #93c5fd
+}
+body[data-theme=dark] .controlbar {
+	background: #111827;
+	border: 1px solid #1e293b;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, .3)
+}
+body[data-theme=dark] .doctor-select {
+	background: #1e293b;
+	border-color: #334155;
+	color: #f8fafc
+}
+body[data-theme=dark] .doctor-select option {
+	background: #1e293b;
+	color: #f8fafc
+}
+body[data-theme=dark] .nav-arrow {
+	background: #1e293b;
+	border-color: #334155;
+	color: #f8fafc
+}
+body[data-theme=dark] .nav-arrow:hover {
+	background: rgba(59, 130, 246, .2);
+	color: #60a5fa
+}
+body[data-theme=dark] .jump-input input {
+	background: #1e293b;
+	border-color: #334155;
+	color: #f8fafc
+}
+body[data-theme=dark] .legend {
+	background: #111827;
+	border: 1px solid #1e293b;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, .3)
+}
+body[data-theme=dark] .swatch-past-reserved {
+	background: #312e81;
+	border: 1px solid #4338ca
+}
+body[data-theme=dark] .swatch-past-unreserved {
+	background: #1e293b;
+	border: 1px solid #334155
+}
+body[data-theme=dark] .swatch-unavail {
+	background: repeating-linear-gradient(45deg, #1e293b, #1e293b 4px, #0f172a 0, #0f172a 8px)
+}
+body[data-theme=dark] .swatch-mine {
+	background: #0284c7;
+	border: 1px solid #38bdf8
+}
+body[data-theme=dark] .swatch-reserved {
+	background: #451a03;
+	border: 1px solid #78350f
+}
+body[data-theme=dark] .swatch-avail {
+	background: #064e3b;
+	border: 1px solid #047857
+}
+body[data-theme=dark] .doctor-card {
+	background: #111827;
+	border: 1px solid #1e293b;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, .3)
+}
+body[data-theme=dark] .card-divider {
+	background: #1e293b
+}
+body[data-theme=dark] .info-block .ic-circle {
+	background: rgba(59, 130, 246, .16)
+}
+body[data-theme=dark] .info-block .ic-circle svg {
+	stroke: #60a5fa
+}
+body[data-theme=dark] .schedule-wrap {
+	background: #111827;
+	border: 1px solid #1e293b;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, .3)
+}
+body[data-theme=dark] thead th {
+	background: #1e293b;
+	border-bottom: 2px solid #334155;
+	border-right: 1px solid #273549
+}
+body[data-theme=dark] td {
+	border-bottom: 1px solid #1e293b;
+	border-right: 1px solid #1e293b
+}
+body[data-theme=dark] td.timecol {
+	background: #161e2e;
+	color: #cbd5e1
+}
+body[data-theme=dark] .cell.dash {
+	background: repeating-linear-gradient(45deg, #111827, #111827 5px, #0f172a 0, #0f172a 10px);
+	color: #475569
+}
+body[data-theme=dark] .cell.past-reserved {
+	background: #2e1065;
+	color: #c084fc
+}
+body[data-theme=dark] .cell.past-unreserved {
+	background: #1e293b;
+	color: #64748b
+}
+body[data-theme=dark] .cell.unavail {
+	background: repeating-linear-gradient(45deg, #111827, #111827 5px, #0f172a 0, #0f172a 10px);
+	color: #475569
+}
+body[data-theme=dark] .cell.mine {
+	background: #0284c7;
+	color: #fff
+}
+body[data-theme=dark] .cell.mine:hover {
+	background: #0369a1
+}
+body[data-theme=dark] .cell.reserved {
+	background: #451a03;
+	color: #fde68a
+}
+body[data-theme=dark] .cell.avail {
+	background: #064e3b;
+	color: #6ee7b7
+}
+body[data-theme=dark] .cell.avail:hover {
+	background: #047857;
+	color: #a7f3d0
+}
+body[data-theme=dark] .sort-btn {
+	background: #1e293b;
+	border-color: #334155;
+	color: #f8fafc
+}
+body[data-theme=dark] .sort-btn:hover {
+	background: rgba(59, 130, 246, .2);
+	border-color: #60a5fa
+}
+body[data-theme=dark] .booking-card {
+	background: #111827;
+	border-color: #1e293b
+}
+body[data-theme=dark] .booking-card:hover {
+	border-color: #3b82f6;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, .5)
+}
+body[data-theme=dark] .card-photo-container {
+	background: #1e293b
+}
+body[data-theme=dark] .card-summary-info, body[data-theme=dark] .card-time-info {
+	border-left-color: #1e293b
+}
+body[data-theme=dark] .no-bookings-placeholder {
+	background: #111827;
+	border-color: #1e293b;
+	color: #94a3b8
+}
+body[data-theme=dark] .help-shell {
+	background: #111827;
+	border-color: #1e293b;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, .3)
+}
+body[data-theme=dark] .help-body {
+	background: #111827
+}
+body[data-theme=dark] .faq-item {
+	background: #161e2e;
+	border-color: #1e293b
+}
+body[data-theme=dark] .faq-item summary {
+	background: #1e293b;
+	color: #f8fafc
+}
+body[data-theme=dark] .modal-overlay {
+	background: rgba(3, 7, 18, .75)
+}
+body[data-theme=dark] .modal-card {
+	background: #111827;
+	border-color: #1e293b;
+	box-shadow: 0 25px 50px rgba(0, 0, 0, .7)
+}
+body[data-theme=dark] .modal-header {
+	background: #1e293b;
+	border-bottom-color: #334155
+}
+body[data-theme=dark] .modal-header h3 {
+	color: #f8fafc
+}
+body[data-theme=dark] .modal-close {
+	color: #94a3b8
+}
+body[data-theme=dark] .modal-close:hover {
+	color: #f8fafc
+}
+body[data-theme=dark] .detail-value, body[data-theme=dark] .modal-field input[type=text], body[data-theme=dark] .modal-field textarea {
+	background: #1e293b;
+	border-color: #334155;
+	color: #f8fafc
+}
+body[data-theme=dark] .modal-field input[type=text]:disabled {
+	background: #161e2e;
+	border-color: #1e293b;
+	color: #64748b
+}
+body[data-theme=dark] .modal-footer {
+	background: #1e293b;
+	border-top-color: #334155
+}
+body[data-theme=dark] .btn-secondary {
+	background: #1e293b;
+	border-color: #334155;
+	color: #f8fafc
+}
+body[data-theme=dark] .btn-secondary:hover {
+	background: #334155
+}
+body[data-theme=dark] .btn-danger-disabled {
+	background: #1e293b;
+	color: #475569
+}
+body[data-theme=dark] .main-footer {
+	border-top-color: #1e293b;
+	color: #64748b
 }
